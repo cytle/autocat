@@ -15,4 +15,8 @@
 
 ##　chrome 插件需要满足的功能
 - 向页面插入脚本,监听和拦截请求
+    - 使用 devtools.network API 获取网络请求的有关信息。
 - 通过chrome元素选择进行选择元素
+    - 使用 devtools.panels API 创建面板并与之交互。
+    - 使用 devtools.inspectedWindow API 获取审查窗口的有关信息，并在审查的窗口中执行代码。
+
