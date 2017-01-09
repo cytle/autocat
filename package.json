@@ -8,9 +8,6 @@
     "dev:chrome": "cd shells/chrome && webpack --watch --hide-modules",
     "lint": "eslint src --ext=js,vue && eslint shells/chrome/src && eslint shells/dev/src",
     "build": "npm run lint && cd shells/chrome && cross-env NODE_ENV=production webpack --progress --hide-modules"
-    // "zip": "rm -f chrome.zip && cd shells && zip -r ../chrome.zip chrome -x *src/* -x *webpack.config.js",
-    // "release": "npm run test && npm run build && npm run zip",
-    // "test": "bash test/test.sh"
   },
   "author": "",
   "license": "ISC",
@@ -24,8 +21,8 @@
     "eslint-config-vue": "^2.0.0",
     "eslint-plugin-vue": "^1.0.0",
     "file-loader": "^0.9.0",
+    "jasmine": "^2.5.2",
     "nightwatch": "^0.9.4",
-    "nightwatch-helpers": "^1.2.0",
     "selenium-server": "2.52.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.1.1",
@@ -38,6 +35,7 @@
   "dependencies": {
     "circular-json-es6": "^2.0.0",
     "friendly-errors-webpack-plugin": "^1.1.2",
+    "jasmine": "^2.5.2",
     "lodash.debounce": "^4.0.6",
     "nightwatch-helpers": "^1.2.0",
     "vue": "^2.0.0",
