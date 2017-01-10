@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Cat!!</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+         #container {
+            display: flex;
+            height: 100%;
+        }
+        #asd {
+            height: 100px;
+            width: 100px;
+            background-color: #435;
+        }
+    </style>
+</head>
+<body>
+    <div id="asd" style="width: 100px;"></div>
+    <div id="container">
+        <div id="app"></div>
+    </div>
+    <script src="build/index.build.js"></script>
+    <script>
+
+      const activeBar = document.getElementById('asd');
+      console.log(activeBar.style);
+        const a = function () {
+            const nextWidth = parseInt(activeBar.style.width, 10) + 1;
+            if (nextWidth > 500) {
+                return;
+            }
+            console.log(nextWidth);
+            activeBar.style.width = nextWidth + 'px';
+
+            setTimeout(a, 50);
+        };
+        a();
+    </script>
+</body>
+</html>
+

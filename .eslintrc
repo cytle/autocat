@@ -1,0 +1,31 @@
+{
+  "root": true,
+  "extends": "vue",
+  "plugins": [
+    "html"
+  ],
+  "globals": {
+    "bridge": true,
+    "chrome": true,
+    "localStorage": true
+  },
+  "rules": {
+    "object-curly-spacing": 0,
+    "indent": [
+      "error",
+      2
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}
