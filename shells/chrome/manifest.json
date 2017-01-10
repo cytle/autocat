@@ -10,14 +10,14 @@
     "description": "This extension demonstrates a browser action with kittens.",
     "version": "1.0",
     "permissions": [ "http://*/*", "https://*/*", "file://*" ],
-    "browser_action": {
-        "default_icon": "icon.png",
-        "default_popup": "popup.html"
-    },
+    // "browser_action": {
+    //     "default_icon": "icon.png",
+    //     "default_popup": "popup.html"
+    // },
     // "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "devtools_page": "devtools-background.html",
     "background": {
-        "scripts": [ "background.js" ],
+        "scripts": [ "./build/background.build.js" ],
         "persistent": false
     }
 
