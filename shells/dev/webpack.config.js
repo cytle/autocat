@@ -15,7 +15,7 @@ module.exports = {
     publicPath: '/build/'
   },
   externals: {
-    'jquery': 'jQuery'
+    // 'jquery': 'jQuery'
   },
   resolve: {
     alias

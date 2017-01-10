@@ -44,7 +44,7 @@
       <i class="material-icons">cached</i>
       <span class="pane-name">Refresh</span>
     </a>
-    <span class="active-bar"></span>
+    <span class="active-bar" ref="activeBar"></span>
   </div>
 </div>
 </template>
@@ -67,7 +67,7 @@ export default {
     },
     updateActiveBar () {
       const activeButton = this.$el.querySelector('.button.active');
-      const activeBar = this.$el.querySelector('.active-bar');
+      const activeBar = this.$refs.activeBar;
       activeBar.style.left = activeButton.offsetLeft + 'px';
       activeBar.style.width = activeButton.offsetWidth + 'px';
     }
