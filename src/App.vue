@@ -46,6 +46,7 @@
     </a>
     <span class="active-bar" ref="activeBar"></span>
   </div>
+  <div></div>
 </div>
 </template>
 

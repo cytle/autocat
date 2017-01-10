@@ -7,7 +7,7 @@ module.exports = {
     index: './src/index.js'
   },
   output: {
-    filename: '[name].build.js',
+    filename: '[name].js',
 
     libraryTarget: 'umd',
     pathinfo: true,

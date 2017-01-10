@@ -6,10 +6,11 @@ module.exports = {
   entry: {
     devtools: './src/devtools.js',
     background: './src/background.js',
-    'devtools-background': './src/devtools-background.js'
+    'devtools-background': './src/devtools-background.js',
+    'detector': './src/detector.js'
   },
   output: {
-    filename: '[name].build.js',
+    filename: '[name].js',
 
     libraryTarget: 'umd',
     pathinfo: true,

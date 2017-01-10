@@ -1,17 +1,92 @@
+// the background script runs all the time and serves as a central message
+// hub for each vue devtools (panel + proxy + backend) instance.
 
-var openCount = 0;
-chrome.runtime.onConnect.addListener(function (port) {
-    if (port.name === 'devtools-page') {
-        if (openCount === 0) {
-            alert('开发者工具窗口打开。');
-        }
-        openCount++;
+const ports = {};
 
-        port.onDisconnect.addListener(function (port) {
-            openCount--;
-            if (openCount === 0) {
-                alert('最后一个开发者工具窗口关闭。');
-            }
-        });
+chrome.runtime.onConnect.addListener(port => {
+  let tab;
+  let name;
+  installProxy(+port.name);
+  if (isNumeric(port.name)) {
+    tab = port.name;
+    name = 'devtools';
+  } else {
+    tab = port.sender.tab.id;
+    name = 'backend';
+  }
+
+  if (!ports[tab]) {
+    ports[tab] = {
+      devtools: null,
+      backend: null
+    };
+  }
+  ports[tab][name] = port;
+
+  if (ports[tab].devtools && ports[tab].backend) {
+    doublePipe(tab, ports[tab].devtools, ports[tab].backend);
+  }
+});
+
+function isNumeric (str) {
+  return +str + '' === str;
+}
+
+function installProxy (tabId) {
+  chrome.tabs.executeScript(tabId, {
+    file: '/build/proxy.js'
+  }, function (res) {
+    if (!res) {
+      ports[tabId].devtools.postMessage('proxy-fail');
+    } else {
+      console.log('injected proxy to tab ' + tabId);
     }
+  });
+}
+
+function doublePipe (id, one, two) {
+  one.onMessage.addListener(lOne);
+  function lOne (message) {
+    if (message.event === 'log') {
+      return console.log('tab ' + id, message.payload);
+    }
+    console.log('devtools -> backend', message);
+    two.postMessage(message);
+  }
+  two.onMessage.addListener(lTwo);
+  function lTwo (message) {
+    if (message.event === 'log') {
+      return console.log('tab ' + id, message.payload);
+    }
+    console.log('backend -> devtools', message);
+    one.postMessage(message);
+  }
+  function shutdown () {
+    console.log('tab ' + id + ' disconnected.');
+    one.onMessage.removeListener(lOne);
+    two.onMessage.removeListener(lTwo);
+    one.disconnect();
+    two.disconnect();
+    ports[id] = null;
+  }
+  one.onDisconnect.addListener(shutdown);
+  two.onDisconnect.addListener(shutdown);
+  console.log('tab ' + id + ' connected.');
+}
+
+chrome.runtime.onMessage.addListener((req, sender) => {
+  if (sender.tab && req.autoCatDetected) {
+    chrome.browserAction.setIcon({
+      tabId: sender.tab.id,
+      path: {
+        16: 'icons/16.png',
+        48: 'icons/48.png',
+        128: 'icons/128.png'
+      }
+    });
+    chrome.browserAction.setPopup({
+      tabId: sender.tab.id,
+      popup: req.devtoolsEnabled ? 'popups/enabled.html' : 'popups/disabled.html'
+    });
+  }
 });

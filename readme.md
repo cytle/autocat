@@ -23,3 +23,13 @@
     - 使用 devtools.panels API 创建面板并与之交互。
     - 使用 devtools.inspectedWindow API 获取审查窗口的有关信息，并在审查的窗口中执行代码。
 
+
+
+## 遇到问题&解决
+
+1. 在devtools中找不到项目的tag
+肯定是代码写错了
+    - 引用的文件名
+    - 路径
+    - manifest.json是否写对
+    - 修改manifest后需要在chrome重新记载项目
