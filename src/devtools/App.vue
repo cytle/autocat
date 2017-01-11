@@ -51,20 +51,19 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'app',
-  data: () => ({
-    tab: 'components',
-    newEventCount: 1
+  computed: mapState({
+    message: state => state.message,
+    tab: state => state.tab,
+    newEventCount: state => state.events.newEventCount
   }),
-  computed: {
-    foo: () => '\a\s\d',
-    message: () => 'Auto Cat v1.0'
-  },
   methods: {
     refresh: () => {},
     switchTab (tab) {
-      this.tab = tab;
+      this.$store.commit('SWITCH_TAB', tab)
     },
     updateActiveBar () {
       const activeButton = this.$el.querySelector('.button.active');

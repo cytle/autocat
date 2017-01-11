@@ -31,4 +31,3 @@ function handleDisconnect () {
   sendMessageToBackend('shutdown');
 }
 
-document.body.style.backgroundColor = 'red';

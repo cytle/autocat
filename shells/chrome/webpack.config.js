@@ -6,6 +6,7 @@ module.exports = {
   entry: {
     devtools: './src/devtools.js',
     background: './src/background.js',
+    proxy: './src/proxy.js',
     'devtools-background': './src/devtools-background.js',
     'detector': './src/detector.js'
   },

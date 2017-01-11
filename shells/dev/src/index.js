@@ -1,9 +1,3 @@
-import App from 'src/App.vue';
-import Vue from 'vue';
+import { initApp } from 'src/devtools';
 
-new Vue({
-  // store,
-  render (h) {
-    return h(App);
-  }
-}).$mount('#app');
+initApp();
