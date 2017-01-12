@@ -6,10 +6,10 @@ const ports = {};
 chrome.runtime.onConnect.addListener(port => {
   let tab;
   let name;
-  installProxy(+port.name);
   if (isNumeric(port.name)) {
     tab = port.name;
     name = 'devtools';
+    installProxy(+port.name);
   } else {
     tab = port.sender.tab.id;
     name = 'backend';
@@ -75,7 +75,7 @@ function doublePipe (id, one, two) {
 }
 
 chrome.runtime.onMessage.addListener((req, sender) => {
-  if (sender.tab && req.autoCatDetected) {
+  if (sender.tab && req.vueDetected) {
     chrome.browserAction.setIcon({
       tabId: sender.tab.id,
       path: {

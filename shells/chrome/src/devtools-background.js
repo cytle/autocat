@@ -1,9 +1,26 @@
-chrome.devtools.panels.create(
-    'Auto Cat', 'icon.png', 'devtools.html',
+// This is the devtools script, which is called when the user opens the
+// Chrome devtool on a page. We check to see if we global hook has detected
+// Vue presence on the page. If yes, create the Vue panel; otherwise poll
+// for 10 seconds.
+
+let created = false;
+let checkCount = 0;
+
+chrome.devtools.network.onNavigated.addListener(createPanel);
+createPanel();
+
+function createPanel () {
+  if (created || checkCount++ > 10) {
+    return;
+  }
+  created = true;
+  chrome.devtools.panels.create(
+    'Auto Cat', 'icons/128.png', 'devtools.html',
     function (panel) {
-      // 面板创建时调用的代码
+      // panel loaded
     }
-);
+  );
+}
 
 const getProperties = (dom) => {
   if (!dom) {

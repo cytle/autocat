@@ -1,10 +1,10 @@
-import { inDoc } from '../util'
+import { inDoc } from '../util';
 
-const overlay = document.createElement('div')
-overlay.style.backgroundColor = 'rgba(104, 182, 255, 0.35)'
-overlay.style.position = 'fixed'
-overlay.style.zIndex = '99999'
-overlay.style.pointerEvents = 'none'
+const overlay = document.createElement('div');
+overlay.style.backgroundColor = 'rgba(104, 182, 255, 0.35)';
+overlay.style.position = 'fixed';
+overlay.style.zIndex = '99999';
+overlay.style.pointerEvents = 'none';
 
 /**
  * Highlight an instance.
@@ -13,10 +13,10 @@ overlay.style.pointerEvents = 'none'
  */
 
 export function highlight (instance) {
-  if (!instance) return
-  const rect = getInstanceRect(instance)
+  if (!instance) return;
+  const rect = getInstanceRect(instance);
   if (rect) {
-    showOverlay(rect)
+    showOverlay(rect);
   }
 }
 
@@ -26,7 +26,7 @@ export function highlight (instance) {
 
 export function unHighlight () {
   if (overlay.parentNode) {
-    document.body.removeChild(overlay)
+    document.body.removeChild(overlay);
   }
 }
 
@@ -39,12 +39,12 @@ export function unHighlight () {
 
 export function getInstanceRect (instance) {
   if (!inDoc(instance.$el)) {
-    return
+    return;
   }
   if (instance._isFragment) {
-    return getFragmentRect(instance)
+    return getFragmentRect(instance);
   } else if (instance.$el.nodeType === 1) {
-    return instance.$el.getBoundingClientRect()
+    return instance.$el.getBoundingClientRect();
   }
 }
 
@@ -57,35 +57,35 @@ export function getInstanceRect (instance) {
  */
 
 function getFragmentRect ({ _fragmentStart, _fragmentEnd }) {
-  let top, bottom, left, right
+  let top, bottom, left, right;
   util().mapNodeRange(_fragmentStart, _fragmentEnd, function (node) {
-    let rect
+    let rect;
     if (node.nodeType === 1 || node.getBoundingClientRect) {
-      rect = node.getBoundingClientRect()
+      rect = node.getBoundingClientRect();
     } else if (node.nodeType === 3 && node.data.trim()) {
-      rect = getTextRect(node)
+      rect = getTextRect(node);
     }
     if (rect) {
       if (!top || rect.top < top) {
-        top = rect.top
+        top = rect.top;
       }
       if (!bottom || rect.bottom > bottom) {
-        bottom = rect.bottom
+        bottom = rect.bottom;
       }
       if (!left || rect.left < left) {
-        left = rect.left
+        left = rect.left;
       }
       if (!right || rect.right > right) {
-        right = rect.right
+        right = rect.right;
       }
     }
-  })
+  });
   return {
     top,
     left,
     width: right - left,
     height: bottom - top
-  }
+  };
 }
 
 /**
@@ -95,10 +95,10 @@ function getFragmentRect ({ _fragmentStart, _fragmentEnd }) {
  * @return {Rect}
  */
 
-const range = document.createRange()
+const range = document.createRange();
 function getTextRect (node) {
-  range.selectNode(node)
-  return range.getBoundingClientRect()
+  range.selectNode(node);
+  return range.getBoundingClientRect();
 }
 
 /**
@@ -108,11 +108,11 @@ function getTextRect (node) {
  */
 
 function showOverlay ({ width = 0, height = 0, top = 0, left = 0 }) {
-  overlay.style.width = ~~width + 'px'
-  overlay.style.height = ~~height + 'px'
-  overlay.style.top = ~~top + 'px'
-  overlay.style.left = ~~left + 'px'
-  document.body.appendChild(overlay)
+  overlay.style.width = ~~width + 'px';
+  overlay.style.height = ~~height + 'px';
+  overlay.style.top = ~~top + 'px';
+  overlay.style.left = ~~left + 'px';
+  document.body.appendChild(overlay);
 }
 
 /**
@@ -120,5 +120,5 @@ function showOverlay ({ width = 0, height = 0, top = 0, left = 0 }) {
  */
 
 function util () {
-  return window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue.util
+  return window.__AUTO_CAT_DEVTOOLS_GLOBAL_HOOK__.Vue.util;
 }

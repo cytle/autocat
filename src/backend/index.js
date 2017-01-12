@@ -1,88 +1,89 @@
 // This is the backend that is injected into the page that a Vue app lives in
 // when the Vue Devtools panel is activated.
 
-import { highlight, unHighlight, getInstanceRect } from './highlighter'
-import { initVuexBackend } from './vuex'
-import { initEventsBackend } from './events'
-import { stringify, classify, camelize } from '../util'
+import { highlight, unHighlight, getInstanceRect } from './highlighter';
+import { initVuexBackend } from './vuex';
+import { initEventsBackend } from './events';
+import { stringify, classify, camelize } from '../util';
 
 // hook should have been injected before this executes.
-const hook = window.__VUE_DEVTOOLS_GLOBAL_HOOK__
-const rootInstances = []
-const propModes = ['default', 'sync', 'once']
+const hook = window.__AUTO_CAT_DEVTOOLS_GLOBAL_HOOK__;
+const rootInstances = [];
+const propModes = ['default', 'sync', 'once'];
 
-const instanceMap = window.__VUE_DEVTOOLS_INSTANCE_MAP__ = new Map()
-const consoleBoundInstances = Array(5)
-let currentInspectedId
-let bridge
-let filter = ''
-let captureCount = 0
-
+const instanceMap = window.__VUE_DEVTOOLS_INSTANCE_MAP__ = new Map();
+const consoleBoundInstances = Array(5);
+let currentInspectedId;
+let bridge;
+let filter = '';
+let captureCount = 0;
 export function initBackend (_bridge) {
-  bridge = _bridge
+  console.log('bridge', _bridge);
+  console.log('hook', hook);
+  bridge = _bridge;
   if (hook.Vue) {
-    connect()
+    connect();
   } else {
-    hook.once('init', connect)
+    hook.once('init', connect);
   }
 }
 
 function connect () {
-  hook.currentTab = 'components'
+  hook.currentTab = 'components';
   bridge.on('switch-tab', tab => {
-    hook.currentTab = tab
+    hook.currentTab = tab;
     if (tab === 'components') {
-      flush()
+      flush();
     }
-  })
+  });
 
   // the backend may get injected to the same page multiple times
   // if the user closes and reopens the devtools.
   // make sure there's only one flush listener.
-  hook.off('flush')
+  hook.off('flush');
   hook.on('flush', () => {
     if (hook.currentTab === 'components') {
-      flush()
+      flush();
     }
-  })
+  });
 
   bridge.on('select-instance', id => {
-    currentInspectedId = id
-    const instance = instanceMap.get(id)
+    currentInspectedId = id;
+    const instance = instanceMap.get(id);
     if (instance) {
-      scrollIntoView(instance)
-      highlight(instance)
+      scrollIntoView(instance);
+      highlight(instance);
     }
-    bindToConsole(instance)
-    flush()
-    bridge.send('instance-details', stringify(getInstanceDetails(id)))
-  })
+    bindToConsole(instance);
+    flush();
+    bridge.send('instance-details', stringify(getInstanceDetails(id)));
+  });
 
   bridge.on('filter-instances', _filter => {
-    filter = _filter.toLowerCase()
-    flush()
-  })
+    filter = _filter.toLowerCase();
+    flush();
+  });
 
-  bridge.on('refresh', scan)
-  bridge.on('enter-instance', id => highlight(instanceMap.get(id)))
-  bridge.on('leave-instance', unHighlight)
+  bridge.on('refresh', scan);
+  bridge.on('enter-instance', id => highlight(instanceMap.get(id)));
+  bridge.on('leave-instance', unHighlight);
 
   // vuex
   if (hook.store) {
-    initVuexBackend(hook, bridge)
+    initVuexBackend(hook, bridge);
   } else {
     hook.once('vuex:init', store => {
-      initVuexBackend(hook, bridge)
-    })
+      initVuexBackend(hook, bridge);
+    });
   }
 
   // events
-  initEventsBackend(hook.Vue, bridge)
+  initEventsBackend(hook.Vue, bridge);
 
-  bridge.log('backend ready.')
-  bridge.send('ready', hook.Vue.version)
-  console.log('[vue-devtools] Ready. Detected Vue v' + hook.Vue.version)
-  scan()
+  bridge.log('backend ready.');
+  bridge.send('ready', hook.Vue.version);
+  console.log('[vue-devtools] Ready. Detected Vue v' + hook.Vue.version);
+  scan();
 }
 
 /**
@@ -90,28 +91,28 @@ function connect () {
  */
 
 function scan () {
-  rootInstances.length = 0
-  let inFragment = false
-  let currentFragment = null
+  rootInstances.length = 0;
+  let inFragment = false;
+  let currentFragment = null;
   walk(document, function (node) {
     if (inFragment) {
       if (node === currentFragment._fragmentEnd) {
-        inFragment = false
-        currentFragment = null
+        inFragment = false;
+        currentFragment = null;
       }
-      return true
+      return true;
     }
-    const instance = node.__vue__
+    const instance = node.__vue__;
     if (instance) {
       if (instance._isFragment) {
-        inFragment = true
-        currentFragment = instance
+        inFragment = true;
+        currentFragment = instance;
       }
-      rootInstances.push(instance)
-      return true
+      rootInstances.push(instance);
+      return true;
     }
-  })
-  flush()
+  });
+  flush();
 }
 
 /**
@@ -124,11 +125,11 @@ function scan () {
 function walk (node, fn) {
   if (node.childNodes) {
     Array.prototype.forEach.call(node.childNodes, function (node) {
-      const stop = fn(node)
+      const stop = fn(node);
       if (!stop) {
-        walk(node, fn)
+        walk(node, fn);
       }
-    })
+    });
   }
 }
 
@@ -140,19 +141,19 @@ function walk (node, fn) {
  */
 
 function flush () {
-  let start
+  let start;
   if (process.env.NODE_ENV !== 'production') {
-    captureCount = 0
-    start = window.performance.now()
+    captureCount = 0;
+    start = window.performance.now();
   }
   const payload = stringify({
     inspectedInstance: getInstanceDetails(currentInspectedId),
     instances: findQualifiedChildrenFromList(rootInstances)
-  })
+  });
   if (process.env.NODE_ENV !== 'production') {
-    console.log(`[flush] serialized ${captureCount} instances, took ${window.performance.now() - start}ms.`)
+    console.log(`[flush] serialized ${captureCount} instances, took ${window.performance.now() - start}ms.`);
   }
-  bridge.send('flush', payload)
+  bridge.send('flush', payload);
 }
 
 /**
@@ -167,10 +168,10 @@ function flush () {
 
 function findQualifiedChildrenFromList (instances) {
   instances = instances
-    .filter(child => !child._isBeingDestroyed)
+    .filter(child => !child._isBeingDestroyed);
   return !filter
     ? instances.map(capture)
-    : Array.prototype.concat.apply([], instances.map(findQualifiedChildren))
+    : Array.prototype.concat.apply([], instances.map(findQualifiedChildren));
 }
 
 /**
@@ -185,7 +186,7 @@ function findQualifiedChildrenFromList (instances) {
 function findQualifiedChildren (instance) {
   return isQualified(instance)
     ? capture(instance)
-    : findQualifiedChildrenFromList(instance.$children)
+    : findQualifiedChildrenFromList(instance.$children);
 }
 
 /**
@@ -196,8 +197,8 @@ function findQualifiedChildren (instance) {
  */
 
 function isQualified (instance) {
-  const name = getInstanceName(instance).toLowerCase()
-  return name.indexOf(filter) > -1
+  const name = getInstanceName(instance).toLowerCase();
+  return name.indexOf(filter) > -1;
 }
 
 /**
@@ -209,9 +210,9 @@ function isQualified (instance) {
 
 function capture (instance, _, list) {
   if (process.env.NODE_ENV !== 'production') {
-    captureCount++
+    captureCount++;
   }
-  mark(instance)
+  mark(instance);
   const ret = {
     id: instance._uid,
     name: getInstanceName(instance),
@@ -220,33 +221,33 @@ function capture (instance, _, list) {
     children: instance.$children
       .filter(child => !child._isBeingDestroyed)
       .map(capture)
-  }
+  };
   // record screen position to ensure correct ordering
   if ((!list || list.length > 1) && !instance._inactive) {
-    const rect = getInstanceRect(instance)
-    ret.top = rect ? rect.top : Infinity
+    const rect = getInstanceRect(instance);
+    ret.top = rect ? rect.top : Infinity;
   } else {
-    ret.top = Infinity
+    ret.top = Infinity;
   }
   // check if instance is available in console
-  const consoleId = consoleBoundInstances.indexOf(instance._uid)
-  ret.consoleId = consoleId > -1 ? '$vm' + consoleId : null
+  const consoleId = consoleBoundInstances.indexOf(instance._uid);
+  ret.consoleId = consoleId > -1 ? '$vm' + consoleId : null;
   // check router view
-  const isRouterView2 = instance.$vnode && instance.$vnode.data.routerView
+  const isRouterView2 = instance.$vnode && instance.$vnode.data.routerView;
   if (instance._routerView || isRouterView2) {
-    ret.isRouterView = true
+    ret.isRouterView = true;
     if (!instance._inactive) {
-      const matched = instance.$route.matched
+      const matched = instance.$route.matched;
       const depth = isRouterView2
         ? instance.$vnode.data.routerViewDepth
-        : instance._routerView.depth
+        : instance._routerView.depth;
       ret.matchedRouteSegment =
         matched &&
         matched[depth] &&
-        (isRouterView2 ? matched[depth].path : matched[depth].handler.path)
+        (isRouterView2 ? matched[depth].path : matched[depth].handler.path);
     }
   }
-  return ret
+  return ret;
 }
 
 /**
@@ -257,10 +258,10 @@ function capture (instance, _, list) {
 
 function mark (instance) {
   if (!instanceMap.has(instance._uid)) {
-    instanceMap.set(instance._uid, instance)
+    instanceMap.set(instance._uid, instance);
     instance.$on('hook:beforeDestroy', function () {
-      instanceMap.delete(instance._uid)
-    })
+      instanceMap.delete(instance._uid);
+    });
   }
 }
 
@@ -271,9 +272,9 @@ function mark (instance) {
  */
 
 function getInstanceDetails (id) {
-  const instance = instanceMap.get(id)
+  const instance = instanceMap.get(id);
   if (!instance) {
-    return {}
+    return {};
   } else {
     return {
       id: id,
@@ -286,7 +287,7 @@ function getInstanceDetails (id) {
         processFirebaseBindings(instance),
         processObservables(instance)
       )
-    }
+    };
   }
 }
 
@@ -298,12 +299,12 @@ function getInstanceDetails (id) {
  */
 
 export function getInstanceName (instance) {
-  const name = instance.$options.name || instance.$options._componentTag
+  const name = instance.$options.name || instance.$options._componentTag;
   return name
     ? classify(name)
     : instance.$root === instance
       ? 'Root'
-      : 'Anonymous Component'
+      : 'Anonymous Component';
 }
 
 /**
@@ -316,12 +317,12 @@ export function getInstanceName (instance) {
  */
 
 function processProps (instance) {
-  let props
+  let props;
   if ((props = instance._props)) {
     // 1.x
     return Object.keys(props).map(key => {
-      const prop = props[key]
-      const options = prop.options
+      const prop = props[key];
+      const options = prop.options;
       return {
         type: 'prop',
         key: prop.path,
@@ -331,13 +332,13 @@ function processProps (instance) {
           required: !!options.required,
           'binding mode': propModes[prop.mode]
         }
-      }
-    })
+      };
+    });
   } else if ((props = instance.$options.props)) {
     // 2.0
     return Object.keys(props).map(key => {
-      const prop = props[key]
-      key = camelize(key)
+      const prop = props[key];
+      key = camelize(key);
       return {
         type: 'prop',
         key,
@@ -346,10 +347,10 @@ function processProps (instance) {
           type: prop.type ? getPropType(prop.type) : 'any',
           required: !!prop.required
         }
-      }
-    })
+      };
+    });
   } else {
-    return []
+    return [];
   }
 }
 
@@ -359,11 +360,11 @@ function processProps (instance) {
  * @param {Function} fn
  */
 
-const fnTypeRE = /^function (\w+)\(/
+const fnTypeRE = /^function (\w+)\(/;
 function getPropType (type) {
   return typeof type === 'function'
     ? type.toString().match(fnTypeRE)[1]
-    : 'any'
+    : 'any';
 }
 
 /**
@@ -376,10 +377,10 @@ function getPropType (type) {
  */
 
 function processState (instance) {
-  const props = instance._props || instance.$options.props
+  const props = instance._props || instance.$options.props;
   const getters =
     instance.$options.vuex &&
-    instance.$options.vuex.getters
+    instance.$options.vuex.getters;
   return Object.keys(instance._data)
     .filter(key => (
       !(props && key in props) &&
@@ -388,7 +389,7 @@ function processState (instance) {
     .map(key => ({
       key,
       value: instance._data[key]
-    }))
+    }));
 }
 
 /**
@@ -407,15 +408,15 @@ function processComputed (instance) {
         type: 'computed',
         key,
         value: instance[key]
-      }
+      };
     } catch (e) {
       return {
         type: 'computed',
         key,
         value: '(error during evaluation)'
-      }
+      };
     }
-  })
+  });
 }
 
 /**
@@ -426,20 +427,20 @@ function processComputed (instance) {
  */
 
 function processRouteContext (instance) {
-  const route = instance.$route
+  const route = instance.$route;
   if (route) {
-    const { path, query, params } = route
-    const value = { path, query, params }
-    if (route.fullPath) value.fullPath = route.fullPath
-    if (route.hash) value.hash = route.hash
-    if (route.name) value.name = route.name
-    if (route.meta) value.meta = route.meta
+    const { path, query, params } = route;
+    const value = { path, query, params };
+    if (route.fullPath) value.fullPath = route.fullPath;
+    if (route.hash) value.hash = route.hash;
+    if (route.name) value.name = route.name;
+    if (route.meta) value.meta = route.meta;
     return [{
       key: '$route',
       value
-    }]
+    }];
   } else {
-    return []
+    return [];
   }
 }
 
@@ -453,17 +454,17 @@ function processRouteContext (instance) {
 function processVuexGetters (instance) {
   const getters =
     instance.$options.vuex &&
-    instance.$options.vuex.getters
+    instance.$options.vuex.getters;
   if (getters) {
     return Object.keys(getters).map(key => {
       return {
         type: 'vuex getter',
         key,
         value: instance[key]
-      }
-    })
+      };
+    });
   } else {
-    return []
+    return [];
   }
 }
 
@@ -475,17 +476,17 @@ function processVuexGetters (instance) {
  */
 
 function processFirebaseBindings (instance) {
-  var refs = instance.$firebaseRefs
+  var refs = instance.$firebaseRefs;
   if (refs) {
     return Object.keys(refs).map(key => {
       return {
         type: 'firebase binding',
         key,
         value: instance[key]
-      }
-    })
+      };
+    });
   } else {
-    return []
+    return [];
   }
 }
 
@@ -497,17 +498,17 @@ function processFirebaseBindings (instance) {
  */
 
 function processObservables (instance) {
-  var obs = instance.$observables
+  var obs = instance.$observables;
   if (obs) {
     return Object.keys(obs).map(key => {
       return {
         type: 'observable',
         key,
         value: instance[key]
-      }
-    })
+      };
+    });
   } else {
-    return []
+    return [];
   }
 }
 
@@ -518,9 +519,9 @@ function processObservables (instance) {
  */
 
 function scrollIntoView (instance) {
-  const rect = getInstanceRect(instance)
+  const rect = getInstanceRect(instance);
   if (rect) {
-    window.scrollBy(0, rect.top)
+    window.scrollBy(0, rect.top);
   }
 }
 
@@ -532,16 +533,16 @@ function scrollIntoView (instance) {
  */
 
 function bindToConsole (instance) {
-  const id = instance._uid
-  const index = consoleBoundInstances.indexOf(id)
+  const id = instance._uid;
+  const index = consoleBoundInstances.indexOf(id);
   if (index > -1) {
-    consoleBoundInstances.splice(index, 1)
+    consoleBoundInstances.splice(index, 1);
   } else {
-    consoleBoundInstances.pop()
+    consoleBoundInstances.pop();
   }
-  consoleBoundInstances.unshift(id)
+  consoleBoundInstances.unshift(id);
   for (var i = 0; i < 5; i++) {
-    window['$vm' + i] = instanceMap.get(consoleBoundInstances[i])
+    window['$vm' + i] = instanceMap.get(consoleBoundInstances[i]);
   }
-  window.$vm = instance
+  window.$vm = instance;
 }

@@ -1,12 +1,12 @@
-import { stringify } from '../util'
-import { getInstanceName } from './index'
+import { stringify } from '../util';
+import { getInstanceName } from './index';
 
 export function initEventsBackend (Vue, bridge) {
-  let recording = true
+  let recording = true;
 
   bridge.on('events:toggle-recording', enabled => {
-    recording = enabled
-  })
+    recording = enabled;
+  });
 
   function logEvent (vm, type, eventName, payload) {
     // The string check is important for compat with 1.x where the first
@@ -21,24 +21,24 @@ export function initEventsBackend (Vue, bridge) {
         instanceId: vm._uid,
         instanceName: getInstanceName(vm._self || vm),
         timestamp: Date.now()
-      }))
+      }));
     }
   }
 
   function wrap (method) {
-    const original = Vue.prototype[method]
+    const original = Vue.prototype[method];
     if (original) {
       Vue.prototype[method] = function (...args) {
-        const res = original.apply(this, args)
+        const res = original.apply(this, args);
         if (recording) {
-          logEvent(this, method, args[0], args.slice(1))
+          logEvent(this, method, args[0], args.slice(1));
         }
-        return res
-      }
+        return res;
+      };
     }
   }
 
-  wrap('$emit')
-  wrap('$broadcast')
-  wrap('$dispatch')
+  wrap('$emit');
+  wrap('$broadcast');
+  wrap('$dispatch');
 }

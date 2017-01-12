@@ -72,7 +72,7 @@ export function installHook (window) {
     hook.store = store
   })
 
-  Object.defineProperty(window, '__VUE_DEVTOOLS_GLOBAL_HOOK__', {
+  Object.defineProperty(window, '__AUTO_CAT_DEVTOOLS_GLOBAL_HOOK__', {
     get () {
       return hook
     }
