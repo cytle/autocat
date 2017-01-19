@@ -44,6 +44,7 @@
   "dependencies": {
     "babel-loader": "^6.2.10",
     "circular-json-es6": "^2.0.0",
+    "debug": "^2.6.0",
     "friendly-errors-webpack-plugin": "^1.1.2",
     "lodash.debounce": "^4.0.6",
     "vue": "^2.0.0",
