@@ -63,6 +63,13 @@ function initApp (shell) {
       );
     });
 
+    bridge.on('message', (message) => {
+      store.commit(
+        'SHOW_MESSAGE',
+        message
+      );
+    });
+
     bridge.on('flush', payload => {
       store.commit('components/FLUSH', parse(payload));
     });

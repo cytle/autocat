@@ -35,6 +35,10 @@ initDevTools({
       });
       // 3. send a proxy API to the panel
       cb(bridge);
+
+      chrome.devtools.panels.elements.onSelectionChanged.addListener(function () {
+        bridge.emit('message', 'onSelectionChanged');
+      });
     });
   },
 

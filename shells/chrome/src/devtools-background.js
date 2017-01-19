@@ -18,6 +18,8 @@ function createPanel () {
     'Auto Cat', 'icons/128.png', 'devtools.html',
     function (panel) {
       // panel loaded
+      console.error('panel');
+      console.error(panel);
     }
   );
 }
