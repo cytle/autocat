@@ -1,5 +1,8 @@
 // the background script runs all the time and serves as a central message
 // hub for each vue devtools (panel + proxy + backend) instance.
+import debugCreator from 'debug';
+
+const debug = debugCreator('chrome:background');
 
 const ports = {};
 
@@ -39,7 +42,7 @@ function installProxy (tabId) {
     if (!res) {
       ports[tabId].devtools.postMessage('proxy-fail');
     } else {
-      console.log('injected proxy to tab ' + tabId);
+      debug('injected proxy to tab ' + tabId);
     }
   });
 }
@@ -48,21 +51,21 @@ function doublePipe (id, one, two) {
   one.onMessage.addListener(lOne);
   function lOne (message) {
     if (message.event === 'log') {
-      return console.log('tab ' + id, message.payload);
+      return debug('tab ' + id, message.payload);
     }
-    console.log('devtools -> backend', message);
+    debug('devtools -> backend', message);
     two.postMessage(message);
   }
   two.onMessage.addListener(lTwo);
   function lTwo (message) {
     if (message.event === 'log') {
-      return console.log('tab ' + id, message.payload);
+      return debug('tab ' + id, message.payload);
     }
-    console.log('backend -> devtools', message);
+    debug('backend -> devtools', message);
     one.postMessage(message);
   }
   function shutdown () {
-    console.log('tab ' + id + ' disconnected.');
+    debug('tab ' + id + ' disconnected.');
     one.onMessage.removeListener(lOne);
     two.onMessage.removeListener(lTwo);
     one.disconnect();
@@ -71,7 +74,7 @@ function doublePipe (id, one, two) {
   }
   one.onDisconnect.addListener(shutdown);
   two.onDisconnect.addListener(shutdown);
-  console.log('tab ' + id + ' connected.');
+  debug('tab ' + id + ' connected.');
 }
 
 chrome.runtime.onMessage.addListener((req, sender) => {

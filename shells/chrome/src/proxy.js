@@ -2,6 +2,9 @@
 // activated. Because it is not injected using eval, it has full privilege
 // to the chrome runtime API. It serves as a proxy between the injected
 // backend and the Vue devtools panel.
+import debugCreator from 'debug';
+
+const debug = debugCreator('chrome:proxy');
 
 const port = chrome.runtime.connect({
   name: 'content-script'
@@ -22,6 +25,8 @@ function sendMessageToBackend (payload) {
 
 function sendMessageToDevtools (e) {
   if (e.data && e.data.source === 'vue-devtools-backend') {
+    debug('sendMessageToDevtools');
+    debug(e.data);
     port.postMessage(e.data.payload);
   }
 }

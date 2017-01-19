@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import events from 'views/events/module'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import events from 'views/events/module';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
@@ -11,21 +11,21 @@ const store = new Vuex.Store({
   },
   mutations: {
     SHOW_MESSAGE (state, message) {
-      state.message = message
+      state.message = message;
     },
     SWITCH_TAB (state, tab) {
-      state.tab = tab
+      state.tab = tab;
     },
     RECEIVE_INSTANCE_DETAILS (state, instance) {
-      state.message = 'Instance selected: ' + instance.name
+      state.message = 'Instance selected: ' + instance.name;
     }
   },
   modules: {
     events
   }
-})
+});
 
-export default store
+export default store;
 
 if (module.hot) {
   module.hot.accept([
@@ -36,9 +36,9 @@ if (module.hot) {
         modules: {
           events: require('views/events/module').default
         }
-      })
+      });
     } catch (e) {
-      console.log(e.stack)
+      console.log(e.stack);
     }
-  })
+  });
 }

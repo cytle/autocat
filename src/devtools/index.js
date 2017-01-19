@@ -2,6 +2,9 @@ import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
 import { parse } from '../util';
+import debugCreator from 'debug';
+
+const debug = debugCreator('src:devtools:index');
 
 Vue.config.errorHandler = (e, vm) => {
   bridge.send('ERROR', {

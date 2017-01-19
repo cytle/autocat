@@ -5,7 +5,7 @@
     <img class="logo" src="./assets/icon-large.png" alt="logo">
     <span class="message-container">
       <transition name="slide-up">
-        <span class="message" :key="message">{{ message }}</span>
+        <span class="message" :key="message">{{ logMessage }} - {{ message }}</span>
       </transition>
     </span>
     <a
@@ -51,19 +51,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 
 export default {
   name: 'app',
   computed: mapState({
     message: state => state.message,
+    logMessage: state => state.events.logMessage,
     tab: state => state.tab,
     newEventCount: state => state.events.newEventCount
   }),
   methods: {
     refresh: () => {},
     switchTab (tab) {
-      this.$store.commit('SWITCH_TAB', tab)
+      this.$store.commit('SWITCH_TAB', tab);
     },
     updateActiveBar () {
       const activeButton = this.$el.querySelector('.button.active');

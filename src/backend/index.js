@@ -18,8 +18,6 @@ let bridge;
 let filter = '';
 let captureCount = 0;
 export function initBackend (_bridge) {
-  console.log('bridge', _bridge);
-  console.log('hook', hook);
   bridge = _bridge;
   if (hook.Vue) {
     connect();

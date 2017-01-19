@@ -2,11 +2,17 @@
 
 import { initBackend } from 'src/backend';
 import Bridge from 'src/bridge';
+import debugCreator from 'debug';
+
+const debug = debugCreator('chrome:backend');
+const sendDebug = debugCreator('chrome:backend:send');
 
 window.addEventListener('message', handshake);
 
 function handshake (e) {
   if (e.data.source === 'vue-devtools-proxy' && e.data.payload === 'init') {
+    debug('handshake init');
+
     window.removeEventListener('message', handshake);
 
     let listeners = [];
@@ -21,6 +27,7 @@ function handshake (e) {
         listeners.push(listener);
       },
       send (data) {
+        sendDebug(data);
         window.postMessage({
           source: 'vue-devtools-backend',
           payload: data
