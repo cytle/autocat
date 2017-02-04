@@ -22,7 +22,7 @@
 - 通过chrome元素选择进行选择元素
     - 使用 devtools.panels API 创建面板并与之交互。
     - 使用 devtools.inspectedWindow API 获取审查窗口的有关信息，并在审查的窗口中执行代码。
-
+    - 使用插入的脚本进行监听点击操作,进而在点击之前捕获元素
 
 
 ## 遇到问题&解决

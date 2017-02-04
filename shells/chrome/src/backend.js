@@ -43,9 +43,5 @@ function handshake (e) {
     });
 
     initBackend(bridge);
-    // debug(window.$0);
-    // chrome.devtools.panels.elements.onSelectionChanged.addListener(function () {
-    //   debug('onSelectionChanged');
-    // });
   }
 }

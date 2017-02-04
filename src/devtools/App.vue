@@ -5,7 +5,7 @@
     <img class="logo" src="./assets/icon-large.png" alt="logo">
     <span class="message-container">
       <transition name="slide-up">
-        <span class="message" :key="message">{{ logMessage }} - {{ message }}</span>
+        <span class="message" :key="message">{{ message }}</span>
       </transition>
     </span>
     <a
@@ -46,7 +46,13 @@
     </a>
     <span class="active-bar" ref="activeBar"></span>
   </div>
-  <div></div>
+  <div>
+    <ul>
+      <li v-for="(item, index) in logList" :key="index">
+        {{ item.message }} - {{ item.time }}
+      </li>
+    </ul>
+  </div>
 </div>
 </template>
 
@@ -57,9 +63,10 @@ export default {
   name: 'app',
   computed: mapState({
     message: state => state.message,
-    logMessage: state => state.events.logMessage,
+    logList: state => state.logList,
     tab: state => state.tab,
-    newEventCount: state => state.events.newEventCount
+    newEventCount: state => state.events.newEventCount,
+    elements: state => state.elements.elements
   }),
   methods: {
     refresh: () => {},

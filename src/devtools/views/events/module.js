@@ -8,8 +8,7 @@ const state = {
   events: [],
   inspectedIndex: -1,
   newEventCount: 0,
-  filter: '',
-  logMessage: 'nonnnnn'
+  filter: ''
 };
 
 const mutations = {

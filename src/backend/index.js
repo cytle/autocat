@@ -11,7 +11,7 @@ const hook = window.__AUTO_CAT_DEVTOOLS_GLOBAL_HOOK__;
 const rootInstances = [];
 const propModes = ['default', 'sync', 'once'];
 
-const instanceMap = window.__VUE_DEVTOOLS_INSTANCE_MAP__ = new Map();
+const instanceMap = window.__AUTO_CAT_DEVTOOLS_INSTANCE_MAP__ = new Map();
 const consoleBoundInstances = Array(5);
 let currentInspectedId;
 let bridge;

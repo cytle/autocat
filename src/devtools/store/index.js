@@ -1,13 +1,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import events from 'views/events/module';
+import elements from 'views/elements/module';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
     message: '',
-    tab: 'components'
+    tab: 'components',
+    logList: []
   },
   mutations: {
     SHOW_MESSAGE (state, message) {
@@ -18,9 +20,16 @@ const store = new Vuex.Store({
     },
     RECEIVE_INSTANCE_DETAILS (state, instance) {
       state.message = 'Instance selected: ' + instance.name;
+    },
+    LOG (state, message) {
+      state.logList.push({
+        message,
+        time: Date.now()
+      });
     }
   },
   modules: {
+    elements,
     events
   }
 });

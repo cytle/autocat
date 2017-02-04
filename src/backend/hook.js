@@ -10,40 +10,40 @@
  */
 
 export function installHook (window) {
-  let listeners = {}
+  let listeners = {};
 
   const hook = {
     Vue: null,
 
     on (event, fn) {
       event = '$' + event
-      ;(listeners[event] || (listeners[event] = [])).push(fn)
+      ;(listeners[event] || (listeners[event] = [])).push(fn);
     },
 
     once (event, fn) {
-      event = '$' + event
+      event = '$' + event;
       function on () {
-        this.off(event, on)
-        fn.apply(this, arguments)
+        this.off(event, on);
+        fn.apply(this, arguments);
       }
-      ;(listeners[event] || (listeners[event] = [])).push(on)
+      ;(listeners[event] || (listeners[event] = [])).push(on);
     },
 
     off (event, fn) {
-      event = '$' + event
+      event = '$' + event;
       if (!arguments.length) {
-        listeners = {}
+        listeners = {};
       } else {
-        const cbs = listeners[event]
+        const cbs = listeners[event];
         if (cbs) {
           if (!fn) {
-            listeners[event] = null
+            listeners[event] = null;
           } else {
             for (let i = 0, l = cbs.length; i < l; i++) {
-              const cb = cbs[i]
+              const cb = cbs[i];
               if (cb === fn || cb.fn === fn) {
-                cbs.splice(i, 1)
-                break
+                cbs.splice(i, 1);
+                break;
               }
             }
           }
@@ -52,29 +52,29 @@ export function installHook (window) {
     },
 
     emit (event) {
-      event = '$' + event
-      let cbs = listeners[event]
+      event = '$' + event;
+      let cbs = listeners[event];
       if (cbs) {
-        const args = [].slice.call(arguments, 1)
-        cbs = cbs.slice()
+        const args = [].slice.call(arguments, 1);
+        cbs = cbs.slice();
         for (let i = 0, l = cbs.length; i < l; i++) {
-          cbs[i].apply(this, args)
+          cbs[i].apply(this, args);
         }
       }
     }
-  }
+  };
 
   hook.once('init', Vue => {
-    hook.Vue = Vue
-  })
+    hook.Vue = Vue;
+  });
 
   hook.once('vuex:init', store => {
-    hook.store = store
-  })
+    hook.store = store;
+  });
 
   Object.defineProperty(window, '__AUTO_CAT_DEVTOOLS_GLOBAL_HOOK__', {
     get () {
-      return hook
+      return hook;
     }
-  })
+  });
 }

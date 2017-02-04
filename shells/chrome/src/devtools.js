@@ -2,6 +2,7 @@
 
 import { initDevTools } from 'src/devtools';
 import Bridge from 'src/bridge';
+import { stringify } from 'src/util';
 
 initDevTools({
 
@@ -36,9 +37,17 @@ initDevTools({
       // 3. send a proxy API to the panel
       cb(bridge);
 
-      chrome.devtools.panels.elements.onSelectionChanged.addListener(function () {
-        bridge.emit('message', 'onSelectionChanged');
-      });
+      // 绑定元素选择
+      // chrome.devtools.panels.elements.onSelectionChanged.addListener(function () {
+      //   bridge.emit('log', 'onSelectionChanged@' + Date().toLocaleString());
+      //   chrome.devtools.inspectedWindow.eval('$0', function (el, err) {
+      //     if (err) {
+      //       bridge.emit('log', err);
+      //     }
+      //     bridge.emit('log', el);
+      //     bridge.emit('log', err);
+      //   });
+      // });
     });
   },
 

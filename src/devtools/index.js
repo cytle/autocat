@@ -50,7 +50,7 @@ function initApp (shell) {
     bridge.once('ready', version => {
       store.commit(
         'SHOW_MESSAGE',
-        'Ready. Detected Vue ' + version + '.'
+        'Ready. Auto Cat  ' + version + '.'
       );
       // bridge.send('vuex:toggle-recording', store.state.vuex.enabled);
       // bridge.send('events:toggle-recording', store.state.events.enabled);
@@ -91,6 +91,14 @@ function initApp (shell) {
       if (store.state.tab !== 'events') {
         store.commit('events/INCREASE_NEW_EVENT_COUNT');
       }
+    });
+
+    bridge.on('elements:selectionChanged', payload => {
+      store.commit('elements/SELECTION_CHANGED', parse(payload));
+    });
+
+    bridge.on('log', payload => {
+      store.commit('LOG', payload);
     });
 
     app = new Vue({

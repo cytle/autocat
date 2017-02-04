@@ -17,6 +17,8 @@ port.onDisconnect.addListener(handleDisconnect);
 sendMessageToBackend('init');
 
 function sendMessageToBackend (payload) {
+  debug('sendMessageToBackend');
+  debug(payload);
   window.postMessage({
     source: 'vue-devtools-proxy',
     payload: payload
