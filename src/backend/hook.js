@@ -10,6 +10,8 @@
  */
 
 export function installHook (window) {
+  localStorage.debug = '*';
+
   let listeners = {};
 
   const hook = {

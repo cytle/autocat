@@ -5,7 +5,6 @@ window.addEventListener('message', e => {
 });
 
 function detect (win) {
-  console.error('detect');
   setTimeout(() => {
     win.postMessage({
       devtoolsEnabled: true,
