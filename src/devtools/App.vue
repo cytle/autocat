@@ -52,6 +52,13 @@
         {{ item.message }} - {{ item.time }}
       </li>
     </ul>
+    <span>{{ actions.length }}</span>
+    <ul>
+      <li v-for="(item, index) in actions" :key="index">
+        {{ item.event }} - {{ item.elSelector }}
+      </li>
+    </ul>
+
   </div>
 </div>
 </template>
@@ -66,7 +73,7 @@ export default {
     logList: state => state.logList,
     tab: state => state.tab,
     newEventCount: state => state.events.newEventCount,
-    elements: state => state.elements.elements
+    actions: state => state.elements.actions
   }),
   methods: {
     refresh: () => {},

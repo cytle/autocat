@@ -4,7 +4,8 @@
 // backend and the Vue devtools panel.
 import debugCreator from 'debug';
 
-const debug = debugCreator('chrome:proxy');
+const sendMessageToBackendDebug = debugCreator('chrome:proxy');
+const sendMessageToDevtoolsDebug = debugCreator('chrome:proxy:sendMessageToDevtools');
 
 const port = chrome.runtime.connect({
   name: 'content-script'
@@ -17,8 +18,7 @@ port.onDisconnect.addListener(handleDisconnect);
 sendMessageToBackend('init');
 
 function sendMessageToBackend (payload) {
-  debug('sendMessageToBackend');
-  debug(payload);
+  sendMessageToBackendDebug(payload);
   window.postMessage({
     source: 'vue-devtools-proxy',
     payload: payload
@@ -27,9 +27,13 @@ function sendMessageToBackend (payload) {
 
 function sendMessageToDevtools (e) {
   if (e.data && e.data.source === 'vue-devtools-backend') {
-    debug('sendMessageToDevtools');
-    debug(e.data);
-    port.postMessage(e.data.payload);
+    const payload = e.data.payload;
+    if (payload.event === 'log') {
+      sendMessageToDevtoolsDebug(payload.payload);
+    } else {
+      sendMessageToDevtoolsDebug(payload);
+      port.postMessage(payload);
+    }
   }
 }
 

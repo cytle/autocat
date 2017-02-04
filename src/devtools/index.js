@@ -78,27 +78,8 @@ function initApp (shell) {
       store.commit('components/RECEIVE_INSTANCE_DETAILS', parse(details));
     });
 
-    bridge.on('vuex:init', state => {
-      store.commit('vuex/INIT', state);
-    });
-
-    bridge.on('vuex:mutation', payload => {
-      store.commit('vuex/RECEIVE_MUTATION', payload);
-    });
-
-    bridge.on('event:triggered', payload => {
-      store.commit('events/RECEIVE_EVENT', parse(payload));
-      if (store.state.tab !== 'events') {
-        store.commit('events/INCREASE_NEW_EVENT_COUNT');
-      }
-    });
-
-    bridge.on('elements:selectionChanged', payload => {
-      store.commit('elements/SELECTION_CHANGED', parse(payload));
-    });
-
-    bridge.on('log', payload => {
-      store.commit('LOG', payload);
+    bridge.on('elements:bind-action', payload => {
+      store.commit('elements/BIND_ACTION', parse(payload));
     });
 
     app = new Vue({

@@ -15,7 +15,7 @@ export function installHook (window) {
   let listeners = {};
 
   const hook = {
-    Vue: null,
+    capturing: false,
 
     on (event, fn) {
       event = '$' + event
@@ -66,12 +66,8 @@ export function installHook (window) {
     }
   };
 
-  hook.once('init', Vue => {
-    hook.Vue = Vue;
-  });
-
-  hook.once('vuex:init', store => {
-    hook.store = store;
+  hook.once('capture', () => {
+    hook.capturing = true;
   });
 
   Object.defineProperty(window, '__AUTO_CAT_DEVTOOLS_GLOBAL_HOOK__', {

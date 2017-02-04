@@ -1,15 +1,15 @@
 const state = {
-  elements: [
+  actions: [
     {
-      time: Date.now(),
-      el: '{11111}'
+      event: 'ccc',
+      elSelector: 'asd'
     }
   ]
 };
 
 const mutations = {
-  'SELECTION_CHANGED' (state, el) {
-    state.elements.push(el);
+  'BIND_ACTION' (state, action) {
+    state.actions.push(action);
   }
 };
 
